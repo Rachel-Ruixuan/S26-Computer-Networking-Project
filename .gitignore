@@ -1,0 +1,6 @@
+kathara-trace-test/
+topology.png
+visualize_topology.py
+.DS_Store
+__pycache__/
+*.pyc

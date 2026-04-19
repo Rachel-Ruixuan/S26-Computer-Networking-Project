@@ -1,0 +1,652 @@
+[
+  {
+    "destination": "10.0.3.2",
+    "destination_ip": "10.0.3.2",
+    "destination_name": "pc2",
+    "ttl": 1,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 2.2583329991903156,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.8555829990655184,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.20066701108589768,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.3.2",
+    "destination_ip": "10.0.3.2",
+    "destination_name": "pc2",
+    "ttl": 1,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.2598749997559935,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.48245899961329997,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.1581659889779985,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.3.2",
+    "destination_ip": "10.0.3.2",
+    "destination_name": "pc2",
+    "ttl": 2,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 1.061207993188873,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.5665000062435865,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.4153330228291452,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.3.2",
+    "destination_ip": "10.0.3.2",
+    "destination_name": "pc2",
+    "ttl": 2,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.4001250199507922,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.4648329922929406,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.42054199730046093,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.3.2",
+    "destination_ip": "10.0.3.2",
+    "destination_name": "pc2",
+    "ttl": 3,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.23.2",
+      "rtt_ms": 0.9061669989023358,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.23.2",
+      "rtt_ms": 0.48012498882599175,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.23.2",
+      "rtt_ms": 0.5887919978704304,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.3.2",
+    "destination_ip": "10.0.3.2",
+    "destination_name": "pc2",
+    "ttl": 3,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.23.2",
+      "rtt_ms": 0.5428750009741634,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.23.2",
+      "rtt_ms": 0.6147500243969262,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.23.2",
+      "rtt_ms": 0.3871670051012188,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.3.2",
+    "destination_ip": "10.0.3.2",
+    "destination_name": "pc2",
+    "ttl": 4,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.3.2",
+      "rtt_ms": 0.8807909907773137,
+      "reached": true,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.3.2",
+      "rtt_ms": 0.5564580205827951,
+      "reached": true,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.3.2",
+      "rtt_ms": 1.4896669890731573,
+      "reached": true,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.3.2",
+    "destination_ip": "10.0.3.2",
+    "destination_name": "pc2",
+    "ttl": 4,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.3.2",
+      "rtt_ms": 0.6848750053904951,
+      "reached": true,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.3.2",
+      "rtt_ms": 0.8575830142945051,
+      "reached": true,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.3.2",
+      "rtt_ms": 1.493167015723884,
+      "reached": true,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.4.2",
+    "destination_ip": "10.0.4.2",
+    "destination_name": "pc3",
+    "ttl": 1,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.21341699175536633,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.456416979432106,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.4719170101452619,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.4.2",
+    "destination_ip": "10.0.4.2",
+    "destination_name": "pc3",
+    "ttl": 1,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.29591601924039423,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.4906670073978603,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 0.3397919936105609,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.4.2",
+    "destination_ip": "10.0.4.2",
+    "destination_name": "pc3",
+    "ttl": 2,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.46262500109151006,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.34316699020564556,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.3987500094808638,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.4.2",
+    "destination_ip": "10.0.4.2",
+    "destination_name": "pc3",
+    "ttl": 2,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.4767499922309071,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.3672500024549663,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.12.2",
+      "rtt_ms": 0.4571670142468065,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.4.2",
+    "destination_ip": "10.0.4.2",
+    "destination_name": "pc3",
+    "ttl": 3,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.24.2",
+      "rtt_ms": 0.8322090143337846,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.24.2",
+      "rtt_ms": 0.5908340099267662,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.24.2",
+      "rtt_ms": 0.3669589932542294,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.4.2",
+    "destination_ip": "10.0.4.2",
+    "destination_name": "pc3",
+    "ttl": 3,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.24.2",
+      "rtt_ms": 0.637791003100574,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.24.2",
+      "rtt_ms": 0.5837920180056244,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.24.2",
+      "rtt_ms": 0.39233401184901595,
+      "reached": false,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.4.2",
+    "destination_ip": "10.0.4.2",
+    "destination_name": "pc3",
+    "ttl": 4,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.4.2",
+      "rtt_ms": 0.8782499935477972,
+      "reached": true,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.4.2",
+      "rtt_ms": 0.547957984963432,
+      "reached": true,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.4.2",
+      "rtt_ms": 1.5812079946044832,
+      "reached": true,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "10.0.4.2",
+    "destination_ip": "10.0.4.2",
+    "destination_name": "pc3",
+    "ttl": 4,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.4.2",
+      "rtt_ms": 0.8888750162441283,
+      "reached": true,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.4.2",
+      "rtt_ms": 0.6871669902466238,
+      "reached": true,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": "10.0.4.2",
+      "rtt_ms": 1.5244579990394413,
+      "reached": true,
+      "timeout": false
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 1,
+    "series": 1,
+    "udp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 3.028417006134987,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 1,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1.2352500052656978,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1013.8451249804348,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 2,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1.5465000178664923,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1059.2464589863084,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 2,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1.1025839776266366,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1066.2131250137463,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 3,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1.3058329932391644,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1062.3543340188917,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 3,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1.2079579755663872,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1060.1700420083944,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 4,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 3.52083399775438,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1066.71950101736,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 4,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1.3491249992512167,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1066.3810419791844,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 5,
+    "series": 1,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1.245916006155312,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1059.3154999951366,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  },
+  {
+    "destination": "8.8.8.8",
+    "destination_ip": "8.8.8.8",
+    "destination_name": "google-dns",
+    "ttl": 5,
+    "series": 2,
+    "udp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1.1422499956097454,
+      "reached": false,
+      "timeout": false
+    },
+    "tcp": {
+      "responder_ip": "10.0.1.1",
+      "rtt_ms": 1065.9675839997362,
+      "reached": false,
+      "timeout": false
+    },
+    "icmp": {
+      "responder_ip": null,
+      "rtt_ms": null,
+      "reached": false,
+      "timeout": true
+    }
+  }
+]
