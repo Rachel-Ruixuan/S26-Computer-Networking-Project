@@ -29,6 +29,7 @@ type `nc -nkl 33434`
 **2) plot:**
 under the project directory, run
 ```bash
+conda activate network
 python3 visualize_plotly.py --input results.json --output topology_interactive.html
 ```
 this will generate `topology_interactive.html`
