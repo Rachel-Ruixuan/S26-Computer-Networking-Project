@@ -32,8 +32,7 @@ under the project directory, run
 conda activate network
 python3 visualize_plotly.py --input results.json --output topology_interactive.html
 ```
-this will generate `topology_interactive.html`
-to visualize this interactive html, install the `Live Server` extension from VSCode extensions, open `topology_interactive.html` and click on "Go Live" to redirect to the browser.
+This will generate `topology_interactive.html`. To visualize this interactive html, install the `Live Server` extension from VSCode extensions, open `topology_interactive.html` and click on "Go Live" to redirect to the browser.
 
 ---
 ## Todo
