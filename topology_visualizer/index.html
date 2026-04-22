@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Internet Topology Explorer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Internet Topology Explorer</h1>
+    <p>Interactive source path tree, geographic aggregation, and protocol comparison for traceroute-style results.</p>
+  </header>
+
+  <div class="layout">
+    <section class="panel controls-panel">
+      <h2>Controls</h2>
+      <div class="panel-body">
+        <label for="viewSelect">View</label>
+        <select id="viewSelect">
+          <option value="tree">Tree View</option>
+          <option value="map">Map View</option>
+        </select>
+
+        <label for="protocolSelect">Protocol</label>
+        <select id="protocolSelect">
+          <option value="ALL">All</option>
+          <option value="UDP">UDP</option>
+          <option value="TCP">TCP</option>
+          <option value="ICMP">ICMP</option>
+        </select>
+
+        <label for="destinationSelect">Destination</label>
+        <select id="destinationSelect">
+          <option value="ALL">All destinations</option>
+        </select>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="unknownToggle" checked />
+          <label for="unknownToggle" style="margin:0;">Show unknown hops (*)</label>
+        </div>
+
+        <div class="checkbox-row">
+          <input type="checkbox" id="aggregateToggle" checked />
+          <label for="aggregateToggle" style="margin:0;">Aggregate dense views</label>
+        </div>
+
+        <label for="searchInput">Quick search destination</label>
+        <input type="text" id="searchInput" placeholder="Type part of a destination IP" />
+
+        <div class="legend">
+          <span><i style="background:var(--udp)"></i>UDP</span>
+          <span><i style="background:var(--tcp)"></i>TCP</span>
+          <span><i style="background:var(--icmp)"></i>ICMP</span>
+          <span><i style="background:var(--all)"></i>All</span>
+        </div>
+
+        <div class="small-note note-block">
+          Tree view automatically switches to a shared-path summary when many destinations are selected. Map view uses geographic bins so the plot remains readable.
+        </div>
+        <div class="small-note">
+          Geographic locations are approximate and only work when the input JSON contains latitude and longitude for hops.
+        </div>
+      </div>
+    </section>
+
+    <section class="panel viz-panel">
+      <h2 id="viewTitle">Tree View</h2>
+      <div class="view-stage">
+        <svg id="viz"></svg>
+        <div id="vizOverlay" class="viz-overlay"></div>
+      </div>
+    </section>
+
+    <section class="panel analysis-panel">
+      <h2>Analysis</h2>
+      <div class="panel-body analysis-body">
+        <div class="cards" id="summaryCards"></div>
+
+        <div class="section-title">Protocol comparison</div>
+        <div class="chart-grid">
+          <div class="mini-chart" id="rttChart"></div>
+          <div class="mini-chart" id="lossChart"></div>
+        </div>
+
+        <div class="section-title">Protocol statistics</div>
+        <div class="table-wrap compact-wrap">
+          <table>
+            <thead>
+              <tr><th>Protocol</th><th>Avg RTT</th><th>Loss</th><th>Reached</th></tr>
+            </thead>
+            <tbody id="protocolTable"></tbody>
+          </table>
+        </div>
+
+        <div class="section-title">Most shared hops</div>
+        <div class="table-wrap compact-wrap">
+          <table>
+            <thead>
+              <tr><th>Hop IP</th><th>TTL</th><th>Shared by</th><th>Avg RTT</th></tr>
+            </thead>
+            <tbody id="sharedTable"></tbody>
+          </table>
+        </div>
+
+        <div class="section-title">Selected object</div>
+        <div class="info-list" id="detailList"></div>
+
+        <div class="section-title">Raw probes</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Dst</th><th>TTL</th><th>Series</th><th>Proto</th><th>Reply</th><th>RTT</th><th>OK</th>
+              </tr>
+            </thead>
+            <tbody id="rawTable"></tbody>
+          </table>
+        </div>
+        <div class="pager">
+          <button id="prevPage">Prev</button>
+          <span id="pageInfo"></span>
+          <button id="nextPage">Next</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
