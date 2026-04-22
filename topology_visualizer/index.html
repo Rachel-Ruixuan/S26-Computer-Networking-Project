@@ -52,8 +52,41 @@
 
     <section class="analysis-shell">
       <h2>Further analysis</h2>
-      <div class="analysis-placeholder">
-        Reserved for future statistics, tables, protocol comparison, or summary insights.
+
+      <div class="analysis-intro">
+        The charts below summarize route complexity, latency concentration, and AS-level structure across all traced destinations.
+      </div>
+
+      <div class="analysis-grid">
+        <article class="analysis-card">
+          <h3>Path Length Distribution</h3>
+          <div class="chart-wrap">
+            <canvas id="pathLengthChart"></canvas>
+          </div>
+          <p class="analysis-note">
+            Shows whether most destinations are reached through similarly sized paths or whether a few routes are unusually long.
+          </p>
+        </article>
+
+        <article class="analysis-card">
+          <h3>Largest RTT Jump Distribution</h3>
+          <div class="chart-wrap">
+            <canvas id="rttJumpChart"></canvas>
+          </div>
+          <p class="analysis-note">
+            Highlights whether latency tends to grow gradually or whether some routes contain sharp delay increases at specific hops.
+          </p>
+        </article>
+
+        <article class="analysis-card">
+          <h3>ASN Transition Distribution</h3>
+          <div class="chart-wrap">
+            <canvas id="asnTransitionChart"></canvas>
+          </div>
+          <p class="analysis-note">
+            Summarizes how many autonomous-system boundaries routes cross before reaching their destinations.
+          </p>
+        </article>
       </div>
     </section>
   </main>
@@ -67,6 +100,7 @@
   ></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

@@ -22,12 +22,25 @@
     "#74c0fc"
   ];
 
+  const CHART_COLORS = {
+    bar: "rgba(99, 179, 255, 0.78)",
+    border: "#63b3ff",
+    grid: "rgba(169, 180, 208, 0.14)",
+    ticks: "#c9d3eb",
+    title: "#e8ecf8",
+    tooltipBg: "rgba(12, 18, 36, 0.96)"
+  };
+
   let map;
   let markerLayer;
   let basePathLayer;
   let sourceLayer;
   let selectedNodeLayer;
   let activeHighlightLayer = null;
+
+  let pathLengthChart = null;
+  let rttJumpChart = null;
+  let asnTransitionChart = null;
 
   function mean(nums) {
     return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
@@ -473,6 +486,239 @@
     }
   }
 
+  function countAsnTransitions(path) {
+    let transitions = 0;
+    let prev = null;
+
+    for (const node of path) {
+      const current = node.asn != null && node.asn !== "" ? String(node.asn) : null;
+      if (current == null) continue;
+
+      if (prev != null && current !== prev) {
+        transitions += 1;
+      }
+      prev = current;
+    }
+
+    return transitions;
+  }
+
+  function largestPositiveRttJump(path) {
+    let maxJump = 0;
+
+    for (let i = 1; i < path.length; i += 1) {
+      const prev = path[i - 1].rtt_ms;
+      const curr = path[i].rtt_ms;
+
+      if (!Number.isFinite(prev) || !Number.isFinite(curr)) continue;
+
+      const jump = curr - prev;
+      if (jump > maxJump) maxJump = jump;
+    }
+
+    return Math.round(maxJump);
+  }
+
+  function buildAnalysisMetrics(pathsByDestination) {
+    const pathLengths = [];
+    const rttJumps = [];
+    const asnTransitions = [];
+
+    for (const [, path] of pathsByDestination.entries()) {
+      if (!path.length) continue;
+
+      pathLengths.push(path.length);
+      rttJumps.push(largestPositiveRttJump(path));
+      asnTransitions.push(countAsnTransitions(path));
+    }
+
+    return {
+      pathLengths,
+      rttJumps,
+      asnTransitions
+    };
+  }
+
+  function buildCountMap(values) {
+    const counts = new Map();
+    for (const v of values) {
+      const key = Number(v);
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    return [...counts.entries()].sort((a, b) => a[0] - b[0]);
+  }
+
+  function buildHistogram(values, binSize) {
+    if (!values.length) return [];
+
+    const maxValue = Math.max(...values);
+    const binCount = Math.max(1, Math.ceil((maxValue + 1) / binSize));
+    const bins = Array.from({ length: binCount }, (_, i) => ({
+      start: i * binSize,
+      end: i * binSize + binSize - 1,
+      count: 0
+    }));
+
+    for (const value of values) {
+      const index = Math.min(Math.floor(value / binSize), bins.length - 1);
+      bins[index].count += 1;
+    }
+
+    return bins;
+  }
+
+  function destroyCharts() {
+    [pathLengthChart, rttJumpChart, asnTransitionChart].forEach(chart => {
+      if (chart) chart.destroy();
+    });
+
+    pathLengthChart = null;
+    rttJumpChart = null;
+    asnTransitionChart = null;
+  }
+
+  function baseChartOptions(xTitle, yTitle) {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: CHART_COLORS.tooltipBg,
+          borderColor: "rgba(99, 179, 255, 0.35)",
+          borderWidth: 1,
+          titleColor: "#ffffff",
+          bodyColor: "#e8ecf8",
+          padding: 10
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: CHART_COLORS.ticks
+          },
+          title: {
+            display: true,
+            text: xTitle,
+            color: CHART_COLORS.ticks
+          },
+          grid: {
+            color: CHART_COLORS.grid
+          },
+          border: {
+            color: CHART_COLORS.grid
+          }
+        },
+        y: {
+          beginAtZero: true,
+          ticks: {
+            color: CHART_COLORS.ticks,
+            precision: 0
+          },
+          title: {
+            display: true,
+            text: yTitle,
+            color: CHART_COLORS.ticks
+          },
+          grid: {
+            color: CHART_COLORS.grid
+          },
+          border: {
+            color: CHART_COLORS.grid
+          }
+        }
+      }
+    };
+  }
+
+  function renderCharts(pathsByDestination) {
+    destroyCharts();
+
+    const metrics = buildAnalysisMetrics(pathsByDestination);
+
+    const pathLengthCounts = buildCountMap(metrics.pathLengths);
+    const asnTransitionCounts = buildCountMap(metrics.asnTransitions);
+    const rttBins = buildHistogram(metrics.rttJumps, 100);
+
+    const pathCtx = document.getElementById("pathLengthChart");
+    const rttCtx = document.getElementById("rttJumpChart");
+    const asnCtx = document.getElementById("asnTransitionChart");
+
+    if (pathCtx) {
+      pathLengthChart = new Chart(pathCtx, {
+        type: "bar",
+        data: {
+          labels: pathLengthCounts.map(([k]) => String(k)),
+          datasets: [{
+            data: pathLengthCounts.map(([, v]) => v),
+            backgroundColor: CHART_COLORS.bar,
+            borderColor: CHART_COLORS.border,
+            borderWidth: 1.2,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          ...baseChartOptions("Hop count per destination", "Number of destinations")
+        }
+      });
+    }
+
+    if (rttCtx) {
+      rttJumpChart = new Chart(rttCtx, {
+        type: "bar",
+        data: {
+          labels: rttBins.map(bin => `${bin.start}-${bin.end}`),
+          datasets: [{
+            data: rttBins.map(bin => bin.count),
+            backgroundColor: CHART_COLORS.bar,
+            borderColor: CHART_COLORS.border,
+            borderWidth: 1.2,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          ...baseChartOptions("Largest positive RTT jump (ms)", "Number of destinations"),
+          plugins: {
+            ...baseChartOptions("", "").plugins,
+            tooltip: {
+              ...baseChartOptions("", "").plugins.tooltip,
+              callbacks: {
+                title(items) {
+                  const i = items[0].dataIndex;
+                  const bin = rttBins[i];
+                  return `RTT jump: ${bin.start}-${bin.end} ms`;
+                },
+                label(context) {
+                  return `Destinations: ${context.raw}`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    if (asnCtx) {
+      asnTransitionChart = new Chart(asnCtx, {
+        type: "bar",
+        data: {
+          labels: asnTransitionCounts.map(([k]) => String(k)),
+          datasets: [{
+            data: asnTransitionCounts.map(([, v]) => v),
+            backgroundColor: CHART_COLORS.bar,
+            borderColor: CHART_COLORS.border,
+            borderWidth: 1.2,
+            borderRadius: 4
+          }]
+        },
+        options: {
+          ...baseChartOptions("ASN transitions per destination", "Number of destinations")
+        }
+      });
+    }
+  }
+
   function render() {
     clearLayers();
 
@@ -482,6 +728,7 @@
     drawBasePaths(model.pathsByDestination);
     drawSourceMarker();
     drawIpMarkers(model);
+    renderCharts(model.pathsByDestination);
   }
 
   initMap();
