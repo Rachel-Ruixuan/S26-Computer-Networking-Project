@@ -227,3 +227,367 @@ body {
     height: 260px;
   }
 }
+
+.case-shell {
+  margin: 16px;
+  margin-bottom: 6px;
+  padding: 14px;
+  border: 1px solid #294173;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #101938 0%, #0d1630 100%);
+}
+
+.case-header h3 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.case-header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.case-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.case-card {
+  border: 1px solid rgba(99, 179, 255, 0.18);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 12px 12px 10px;
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.case-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(99, 179, 255, 0.45);
+  background: rgba(99, 179, 255, 0.05);
+}
+
+.case-card.active {
+  border-color: #63b3ff;
+  background: rgba(99, 179, 255, 0.09);
+  box-shadow: 0 0 0 1px rgba(99, 179, 255, 0.15) inset;
+}
+
+.case-card-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.case-card-metric {
+  font-size: 12.5px;
+  color: #cfe0ff;
+  margin-bottom: 6px;
+}
+
+.case-card-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.case-panel {
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(99, 179, 255, 0.06);
+  border: 1px solid rgba(99, 179, 255, 0.16);
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.case-panel.empty {
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.case-title {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.case-meta {
+  color: var(--muted);
+  font-size: 12.5px;
+  margin-bottom: 8px;
+}
+
+.case-desc {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.protocol-list {
+  margin-top: 8px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.destination-label {
+  background: rgba(255, 143, 107, 0.95);
+  color: #09111f;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+}
+
+.hop-label {
+  background: rgba(255, 255, 255, 0.96);
+  color: #0b1020;
+  border: 1px solid rgba(11, 16, 32, 0.18);
+  border-radius: 999px;
+  padding: 1px 6px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1100px) {
+  .case-cards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.case-viz {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.case-subtitle {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+
+/* ---------- Case 1: protocol tree ---------- */
+
+.protocol-tree {
+  display: grid;
+  gap: 10px;
+}
+
+.protocol-trunk,
+.protocol-branches {
+  border: 1px solid rgba(99, 179, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 10px 12px;
+}
+
+.protocol-tree-title {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.protocol-node-list,
+.protocol-branch-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.protocol-node,
+.protocol-branch-hop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.protocol-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.94);
+  color: #0b1020;
+}
+
+.protocol-label {
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: #08111f;
+}
+
+.protocol-label.icmp {
+  background: var(--icmp);
+}
+
+.protocol-label.tcp {
+  background: var(--tcp);
+}
+
+.protocol-label.udp {
+  background: var(--udp);
+}
+
+.protocol-hop-main {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.protocol-hop-meta {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.protocol-branches {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.protocol-branch {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.protocol-branch-title {
+  margin-bottom: 8px;
+}
+
+/* ---------- Case 2: latency timeline ---------- */
+
+.latency-timeline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.latency-hop {
+  min-width: 120px;
+  flex: 1 1 120px;
+  border: 1px solid rgba(99, 179, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 10px;
+  position: relative;
+}
+
+.latency-hop.spike-start,
+.latency-hop.spike-end {
+  border-color: rgba(255, 211, 107, 0.55);
+  background: rgba(255, 211, 107, 0.08);
+}
+
+.latency-hop-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.latency-hop-index {
+  font-size: 11px;
+  font-weight: 700;
+  color: #08111f;
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 999px;
+  padding: 3px 8px;
+}
+
+.latency-hop-rtt {
+  font-size: 12px;
+  font-weight: 700;
+  color: #cfe0ff;
+}
+
+.latency-hop-main {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.latency-hop-meta {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.latency-spike-banner {
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255, 211, 107, 0.08);
+  border: 1px solid rgba(255, 211, 107, 0.22);
+  color: var(--text);
+  font-size: 13px;
+}
+
+/* ---------- Case 3: geographic summary ---------- */
+
+.route-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.route-summary-table th,
+.route-summary-table td {
+  text-align: left;
+  padding: 9px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  vertical-align: top;
+}
+
+.route-summary-table th {
+  color: var(--muted);
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.route-summary-table td {
+  color: var(--text);
+}
+
+.route-summary-table tr:last-child td {
+  border-bottom: none;
+}
+
+.route-destination-row td {
+  background: rgba(255, 143, 107, 0.06);
+}
+
+.route-summary-note {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+
+@media (max-width: 1100px) {
+  .protocol-branches {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2,7 +2,7 @@
 ## 1. Environment setup
 ```bash
 conda create -n network python=3.9
-pip install networkx matplotlib geoip2
+pip install networkx matplotlib geoip2 pandas
 ```
 
 ## 2. Traceroute
