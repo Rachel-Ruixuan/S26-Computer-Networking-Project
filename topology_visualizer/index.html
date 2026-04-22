@@ -4,129 +4,69 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Internet Topology Explorer</title>
+
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"
+  />
+
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>Internet Topology Explorer</h1>
-    <p>Interactive source path tree, geographic aggregation, and protocol comparison for traceroute-style results.</p>
+  <header class="topbar">
+    <div class="title-block">
+      <h1>Internet Topology Explorer</h1>
+      <p>Interactive geographic visualization of traceroute paths and hop IPs.</p>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item">
+        <span class="legend-dot source-dot"></span>
+        Source
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot node-dot"></span>
+        Hop
+      </span>
+      <span class="legend-item">
+        <span class="legend-dot destination-dot"></span>
+        Destination
+      </span>
+    </div>
   </header>
 
-  <div class="layout">
-    <section class="panel controls-panel">
-      <h2>Controls</h2>
-      <div class="panel-body">
-        <label for="viewSelect">View</label>
-        <select id="viewSelect">
-          <option value="tree">Tree View</option>
-          <option value="map">Map View</option>
-        </select>
-
-        <label for="protocolSelect">Protocol</label>
-        <select id="protocolSelect">
-          <option value="ALL">All</option>
-          <option value="UDP">UDP</option>
-          <option value="TCP">TCP</option>
-          <option value="ICMP">ICMP</option>
-        </select>
-
-        <label for="destinationSelect">Destination</label>
-        <select id="destinationSelect">
-          <option value="ALL">All destinations</option>
-        </select>
-
-        <div class="checkbox-row">
-          <input type="checkbox" id="unknownToggle" checked />
-          <label for="unknownToggle" style="margin:0;">Show unknown hops (*)</label>
-        </div>
-
-        <div class="checkbox-row">
-          <input type="checkbox" id="aggregateToggle" checked />
-          <label for="aggregateToggle" style="margin:0;">Aggregate dense views</label>
-        </div>
-
-        <label for="searchInput">Quick search destination</label>
-        <input type="text" id="searchInput" placeholder="Type part of a destination IP" />
-
-        <div class="legend">
-          <span><i style="background:var(--udp)"></i>UDP</span>
-          <span><i style="background:var(--tcp)"></i>TCP</span>
-          <span><i style="background:var(--icmp)"></i>ICMP</span>
-          <span><i style="background:var(--all)"></i>All</span>
-        </div>
-
-        <div class="small-note note-block">
-          Tree view automatically switches to a shared-path summary when many destinations are selected. Map view uses geographic bins so the plot remains readable.
-        </div>
-        <div class="small-note">
-          Geographic locations are approximate and only work when the input JSON contains latitude and longitude for hops.
-        </div>
-      </div>
+  <main class="page">
+    <section class="map-shell">
+      <div id="map"></div>
     </section>
 
-    <section class="panel viz-panel">
-      <h2 id="viewTitle">Tree View</h2>
-      <div class="view-stage">
-        <svg id="viz"></svg>
-        <div id="vizOverlay" class="viz-overlay"></div>
+    <section class="analysis-shell">
+      <h2>Further analysis</h2>
+      <div class="analysis-placeholder">
+        Reserved for future statistics, tables, protocol comparison, or summary insights.
       </div>
     </section>
-
-    <section class="panel analysis-panel">
-      <h2>Analysis</h2>
-      <div class="panel-body analysis-body">
-        <div class="cards" id="summaryCards"></div>
-
-        <div class="section-title">Protocol comparison</div>
-        <div class="chart-grid">
-          <div class="mini-chart" id="rttChart"></div>
-          <div class="mini-chart" id="lossChart"></div>
-        </div>
-
-        <div class="section-title">Protocol statistics</div>
-        <div class="table-wrap compact-wrap">
-          <table>
-            <thead>
-              <tr><th>Protocol</th><th>Avg RTT</th><th>Loss</th><th>Reached</th></tr>
-            </thead>
-            <tbody id="protocolTable"></tbody>
-          </table>
-        </div>
-
-        <div class="section-title">Most shared hops</div>
-        <div class="table-wrap compact-wrap">
-          <table>
-            <thead>
-              <tr><th>Hop IP</th><th>TTL</th><th>Shared by</th><th>Avg RTT</th></tr>
-            </thead>
-            <tbody id="sharedTable"></tbody>
-          </table>
-        </div>
-
-        <div class="section-title">Selected object</div>
-        <div class="info-list" id="detailList"></div>
-
-        <div class="section-title">Raw probes</div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Dst</th><th>TTL</th><th>Series</th><th>Proto</th><th>Reply</th><th>RTT</th><th>OK</th>
-              </tr>
-            </thead>
-            <tbody id="rawTable"></tbody>
-          </table>
-        </div>
-        <div class="pager">
-          <button id="prevPage">Prev</button>
-          <span id="pageInfo"></span>
-          <button id="nextPage">Next</button>
-        </div>
-      </div>
-    </section>
-  </div>
+  </main>
 
   <script src="data.js"></script>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+
   <script src="app.js"></script>
 </body>
 </html>
