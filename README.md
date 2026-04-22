@@ -21,8 +21,8 @@ sudo python3 mini_traceroute.py \
 ```bash
 conda activate network
 cd topology_visualizer
-wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb` # to download GeoLite2-ASN.mmdb
-wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb` # to download GeoLite2-City.mmdb
+wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb # to download GeoLite2-ASN.mmdb
+wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb # to download GeoLite2-City.mmdb
 
 python enrich_geolocation.py sample_data.json enriched_results.json \
   --mmdb GeoLite2-City.mmdb \
