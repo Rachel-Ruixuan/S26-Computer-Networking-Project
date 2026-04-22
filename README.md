@@ -2,41 +2,52 @@
 ## 1. Environment setup
 ```bash
 conda create -n network python=3.9
-pip install networkx matplotlib pygraphviz plotly
+pip install networkx matplotlib geoip2
 ```
 
-## 2. Kathara
-**1) setup**
+## 2. Traceroute
+under the project main directory, run 
 ```bash
-kathara lstart
+sudo python3 mini_traceroute.py \
+  --input destination_prefixes.txt \
+  --max-ttl 20 \
+  --timeout 1.0 \
+  -n \
+  --output topology_visualizer/sample_data.json
 ```
-
-**2) on pc2 & pc3:**
-type `nc -nkl 33434`
-
-**3) on pc1:**
-1. `cat > mini_traceroute.py` 
-2. copy all content from `mini_traceroute.py` 
-3. paste the copied content and  `Ctrl + D` (if nothing happens then `Ctrl + D` again)
-4. Similarly, `cat > targets.csv` then paste all content from `targets.csv` and `Ctrl + D`
-5. `python3 mini_traceroute.py --input targets.csv --max-ttl 5 --port 33434 --num-series 2`
 
 ## 3. Visualization
-**1) copy result**
-1. `cat > results.json` and copy all content
-2. paste as save as `results.json` under the project directory
-
-**2) plot:**
-under the project directory, run
+**1) add ip location**
 ```bash
 conda activate network
-python3 visualize_plotly.py --input results.json --output topology_interactive.html
+cd topology_visualizer
+wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb` # to download GeoLite2-ASN.mmdb
+wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb` # to download GeoLite2-City.mmdb
+
+python enrich_geolocation.py sample_data.json enriched_results.json \
+  --mmdb GeoLite2-City.mmdb \
+  --asn-mmdb GeoLite2-ASN.mmdb
 ```
-This will generate `topology_interactive.html`. To visualize this interactive html, install the `Live Server` extension from VSCode extensions, open `topology_interactive.html` and click on "Go Live" to redirect to the browser.
+then open `enriched_results.json` to replace the first line "source" with 
+```
+"source": {
+    "ip": "10.209.84.68",
+    "lat": 31.2304,
+    "lng": 121.4737,
+    "city": "Shanghai",
+    "region": "Shanghai",
+    "country": "China"
+  },
+```
+
+**2) plot:**
+```bash
+python3 run_visualizer.py enriched_results.json # to view localhost visualization
+```
 
 ---
 ## Todo
-1. check whether the **analyzer** means the mini_traceroute.py, checking the rtt, and the visualizer, or that we need a very specific analyzer class so that we can have a "a b**inary file** or a **makefile** to run the execution of your analyzer"
+1. check whether the **analyzer** means the mini_traceroute.py, checking the rtt, and the visualizer, or that we need a very specific analyzer class so that we can have a "a **binary file** or a **makefile** to run the execution of your analyzer"
 2. check whether the Kathara setup is valid because the requirement says that input needs to be **csv/txt** but Kathara is the basic setup (not sure whether this is allowed/appropriate)
 3. **visualization:** better styling, more visible link **length** & **thickness** difference
 4. Link hover double check
