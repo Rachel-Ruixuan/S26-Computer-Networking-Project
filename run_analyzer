@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -e
+
+ENV_NAME="network"
+
+INPUT_FILE="destination_prefixes.txt"
+OUTPUT_DIR="topology_visualizer"
+RAW_JSON="${OUTPUT_DIR}/sample_data.json"
+ENRICHED_JSON="${OUTPUT_DIR}/enriched_results.json"
+
+detect_python() {
+  if [ -n "${VIRTUAL_ENV:-}" ] && [ -x "${VIRTUAL_ENV}/bin/python3" ]; then
+    echo "${VIRTUAL_ENV}/bin/python3"
+    return 0
+  fi
+
+  if command -v conda >/dev/null 2>&1; then
+    CONDA_PY=$(conda run -n "$ENV_NAME" which python3 2>/dev/null | tail -n 1 || true)
+    if [ -n "$CONDA_PY" ] && [ -x "$CONDA_PY" ]; then
+      echo "$CONDA_PY"
+      return 0
+    fi
+  fi
+
+  if command -v python3 >/dev/null 2>&1; then
+    command -v python3
+    return 0
+  fi
+
+  echo "Error: could not find a usable python3 interpreter." >&2
+  exit 1
+}
+
+ENV_PYTHON="$(detect_python)"
+
+echo "Using Python: ${ENV_PYTHON}"
+echo "Running traceroute analyzer..."
+
+sudo "$ENV_PYTHON" mini_traceroute.py \
+  --input "${INPUT_FILE}" \
+  --max-ttl 20 \
+  --timeout 1.0 \
+  -n \
+  --output "${RAW_JSON}"
+
+cd "${OUTPUT_DIR}"
+
+download_file() {
+  url="$1"
+  output="$2"
+
+  if command -v wget >/dev/null 2>&1; then
+    wget -O "$output" "$url"
+  elif command -v curl >/dev/null 2>&1; then
+    curl -L "$url" -o "$output"
+  else
+    echo "Error: neither wget nor curl is installed." >&2
+    exit 1
+  fi
+}
+
+if [ ! -f "GeoLite2-ASN.mmdb" ]; then
+  download_file \
+    "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb" \
+    "GeoLite2-ASN.mmdb"
+fi
+
+if [ ! -f "GeoLite2-City.mmdb" ]; then
+  download_file \
+    "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb" \
+    "GeoLite2-City.mmdb"
+fi
+
+"$ENV_PYTHON" enrich_geolocation.py sample_data.json enriched_results.json \
+  --mmdb GeoLite2-City.mmdb \
+  --asn-mmdb GeoLite2-ASN.mmdb
+
+cd ..
+"$ENV_PYTHON" topology_visualizer/patch_source.py "${ENRICHED_JSON}"
+
+echo "Done. Final output: ${ENRICHED_JSON}"

@@ -6,13 +6,9 @@ import sys
 import webbrowser
 from pathlib import Path
 
-from trace_analysis import build_analysis
-
 ROOT = Path(__file__).resolve().parent
 
 DATA_JS = ROOT / "data.js"
-ANALYSIS_JS = ROOT / "analysis.js"
-
 
 def main():
     if len(sys.argv) < 2:
@@ -27,16 +23,10 @@ def main():
     with open(data_path, "r", encoding="utf-8") as f:
         data = json.load(f)
 
-    analysis = build_analysis(data)
 
     with open(DATA_JS, "w", encoding="utf-8") as f:
         f.write("window.TRACE_DATA = ")
         json.dump(data, f, ensure_ascii=False)
-        f.write(";\n")
-
-    with open(ANALYSIS_JS, "w", encoding="utf-8") as f:
-        f.write("window.TRACE_ANALYSIS = ")
-        json.dump(analysis, f, ensure_ascii=False)
         f.write(";\n")
 
     os.chdir(ROOT)

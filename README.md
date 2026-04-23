@@ -1,51 +1,94 @@
 # Internet Topology Explorer
-## 1. Environment setup
-```bash
-conda create -n network python=3.9
-pip install networkx matplotlib geoip2 pandas
-```
 
-## 2. Traceroute
-under the project main directory, run 
-```bash
-sudo python3 mini_traceroute.py \
-  --input destination_prefixes.txt \
-  --max-ttl 20 \
-  --timeout 1.0 \
-  -n \
-  --output topology_visualizer/sample_data.json
-```
+## Overview
 
-## 3. Visualization
-**1) add ip location**
-```bash
-conda activate network
-cd topology_visualizer
-wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-ASN.mmdb # to download GeoLite2-ASN.mmdb
-wget https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-City.mmdb # to download GeoLite2-City.mmdb
+This project implements:
 
-python enrich_geolocation.py sample_data.json enriched_results.json \
-  --mmdb GeoLite2-City.mmdb \
-  --asn-mmdb GeoLite2-ASN.mmdb
-```
-then open `enriched_results.json` to replace the first line "source" with 
-```
-"source": {
-    "ip": "10.209.84.68",
-    "lat": 31.2304,
-    "lng": 121.4737,
-    "city": "Shanghai",
-    "region": "Shanghai",
-    "country": "China"
-  },
-```
+* A **custom traceroute-like analyzer** supporting UDP, TCP, and ICMP probes
+* A **geographic topology visualizer** for exploring network paths
 
-**2) plot:**
-```bash
-python3 run_visualizer.py enriched_results.json # to view localhost visualization
+The system collects traceroute data, enriches it with geolocation and ASN information, and displays it interactively in a browser.
+
+---
+
+## Source Structure
+
+```id="tree123"
+.
+├── topology_visualizer/
+│   ├── app.js
+│   ├── data.js
+│   ├── enrich_geolocation.py
+│   ├── enriched_results.json
+│   ├── index.html
+│   ├── patch_source.py
+│   ├── README.md
+│   ├── run_visualizer.py
+│   ├── sample_data.json
+│   └── style.css
+│   
+├── .gitignore
+├── destination_prefixes.txt
+├── HOWTO.md
+├── Makefile
+├── mini_traceroute.py
+├── README.md
+└── run_analyzer
 ```
 
 ---
-## Todo
-1. "a **binary file** or a **makefile** to run the execution of the analyzer"
-2. Link hover show destination?
+
+## Core Components
+
+### Analyzer
+
+- **`mini_traceroute.py`**  
+  Custom traceroute implementation using UDP, TCP, and ICMP probes. Outputs structured JSON. Requires root privileges.
+
+- **`run_analyzer`**  
+  Main executable pipeline. Runs traceroute, downloads GeoLite2 databases, enriches results with geolocation/ASN, and prepares output for visualization.
+
+- **`destination_prefixes.txt`**  
+  Input file containing target IPs or prefixes.
+
+---
+
+### Visualization (`topology_visualizer/`)
+
+- **`run_visualizer.py`**  
+  Starts a local server and launches the visualization.
+
+- **Frontend (`index.html`, `app.js`, `style.css`)**  
+  Interactive map and analysis UI (Leaflet + charts).
+
+- **`data.js`**  
+  Auto-generated data used by the frontend.
+
+- **`enrich_geolocation.py`**  
+  Adds geolocation and ASN data using MaxMind databases.
+
+- **`patch_source.py`**  
+  Fixes the source node location for visualization.
+
+- **`sample_data.json` / `enriched_results.json`**  
+  Raw and processed traceroute outputs.
+
+---
+
+### Build & Execution
+
+- **`Makefile`**  
+  Common commands: `make install`, `make all`, `make clean`.
+
+- **`HOWTO.md`**  
+  Detailed setup and usage instructions.
+
+- **`README.md`**  
+  Project overview and structure.
+
+---
+
+## Notes
+
+- Private IPs are not geolocated.  
+- Visualization uses the enriched JSON output.
