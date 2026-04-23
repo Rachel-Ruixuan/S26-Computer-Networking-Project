@@ -47,8 +47,5 @@ python3 run_visualizer.py enriched_results.json # to view localhost visualizatio
 
 ---
 ## Todo
-1. check whether the **analyzer** means the mini_traceroute.py, checking the rtt, and the visualizer, or that we need a very specific analyzer class so that we can have a "a **binary file** or a **makefile** to run the execution of your analyzer"
-2. check whether the Kathara setup is valid because the requirement says that input needs to be **csv/txt** but Kathara is the basic setup (not sure whether this is allowed/appropriate)
-3. **visualization:** better styling, more visible link **length** & **thickness** difference
-4. Link hover double check
-5. (first check w/ professor abt data input and then) check whether we need to create more input cases to make full use of the visualizer (different color of links)
+1. "a **binary file** or a **makefile** to run the execution of the analyzer"
+2. Link hover show destination?
