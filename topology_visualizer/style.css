@@ -435,15 +435,18 @@ body {
 }
 
 .protocol-label.icmp {
-  background: var(--icmp);
+  background: #8b5cf6;
+  color: #ffffff;
 }
 
 .protocol-label.tcp {
-  background: var(--tcp);
+  background: #f97316;
+  color: #ffffff;
 }
 
 .protocol-label.udp {
-  background: var(--udp);
+  background: #22c55e;
+  color: #08111f;
 }
 
 .protocol-hop-main {

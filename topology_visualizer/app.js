@@ -1,14 +1,6 @@
 (function () {
   const data = window.TRACE_DATA || { source: "unknown", destinations: [] };
 
-  const COLORS = {
-    NODE: "#63b3ff",
-    SOURCE: "#ffd36b",
-    DESTINATION: "#ff8f6b",
-    BASE_PATH: "#63b3ff",
-    SELECTED_NODE: "#ffffff"
-  };
-
   const MULTI_PATH_COLORS = [
     "#ff6b6b",
     "#4dabf7",
@@ -31,6 +23,45 @@
     tooltipBg: "rgba(12, 18, 36, 0.96)"
   };
 
+  const COLORS = {
+    NODE: "#63b3ff",
+    SOURCE: "#ffd36b",
+    DESTINATION: "#ff8f6b",
+    BASE_PATH: "#63b3ff",
+    SELECTED_NODE: "#ffffff",
+    NEUTRAL_HIGHLIGHT: "#1b1b1bd8"
+  };
+
+  const PROTOCOL_STYLES = {
+    icmp: {
+      color: "#8b5cf6",
+      weight: 5,
+      opacity: 0.95,
+      label: "ICMP",
+      bend: 0.9
+    },
+    tcp: {
+      color: "#f97316",
+      weight: 4.5,
+      opacity: 0.95,
+      label: "TCP",
+      bend: 0
+    },
+    udp: {
+      color: "#22c55e",
+      weight: 4.5,
+      opacity: 0.95,
+      label: "UDP",
+      bend: -0.9
+    }
+  };
+
+  const NEUTRAL_HIGHLIGHT_STYLE = {
+    color: "#9da4ab",
+    weight: 5,
+    opacity: 0.95
+  };
+
   let map;
   let markerLayer;
   let basePathLayer;
@@ -43,6 +74,25 @@
   let pathLengthChart = null;
   let rttJumpChart = null;
   let asnTransitionChart = null;
+
+  function buildCurvedSegmentPoints(a, b, bend = 0) {
+    const midLat = (a[0] + b[0]) / 2;
+    const midLng = (a[1] + b[1]) / 2;
+
+    const dLat = b[0] - a[0];
+    const dLng = b[1] - a[1];
+    const len = Math.sqrt(dLat * dLat + dLng * dLng) || 1;
+
+    // perpendicular direction
+    const nLat = -dLng / len;
+    const nLng = dLat / len;
+
+    return [
+      a,
+      [midLat + nLat * bend, midLng + nLng * bend],
+      b
+    ];
+  }
 
   function mean(nums) {
     return nums.length ? nums.reduce((a, b) => a + b, 0) / nums.length : 0;
@@ -201,31 +251,46 @@
     };
   }
 
-  function pathSignature(path) {
-    return path.map(n => n.ip).join(" -> ");
-  }
+  function pairwisePathDifference(pathA, pathB) {
+    if (!pathA.length || !pathB.length) return -1;
 
-  function protocolDivergenceScore(paths) {
-    const valid = Object.entries(paths).filter(([, path]) => path.length > 0);
-    if (valid.length < 2) return -1;
-
-    const signatures = new Set(valid.map(([, path]) => pathSignature(path)));
-    if (signatures.size < 2) return -1;
-
-    let mismatchCount = 0;
-    const maxLen = Math.max(...valid.map(([, path]) => path.length));
+    const maxLen = Math.max(pathA.length, pathB.length);
+    let score = 0;
 
     for (let i = 0; i < maxLen; i += 1) {
-      const hopIps = valid
-        .map(([, path]) => path[i]?.ip || null)
-        .filter(Boolean);
+      const a = pathA[i]?.ip || null;
+      const b = pathB[i]?.ip || null;
 
-      if (hopIps.length >= 2 && new Set(hopIps).size > 1) {
-        mismatchCount += 1;
+      if (a == null && b == null) continue;
+      if (a !== b) score += 1;
+    }
+
+    return score;
+  }
+
+  function protocolPairwiseBreakdown(paths) {
+    const pairs = [
+      ["icmp", "tcp"],
+      ["icmp", "udp"],
+      ["tcp", "udp"]
+    ];
+
+    const breakdown = [];
+    let total = 0;
+
+    for (const [a, b] of pairs) {
+      const score = pairwisePathDifference(paths[a] || [], paths[b] || []);
+      if (score >= 0) {
+        breakdown.push({ pair: `${a.toUpperCase()} vs ${b.toUpperCase()}`, score });
+        total += score;
       }
     }
 
-    return mismatchCount;
+    return {
+      total,
+      breakdown,
+      validPairCount: breakdown.length
+    };
   }
 
   function buildModel(destinations) {
@@ -460,25 +525,81 @@
     return coords;
   }
 
-  function highlightSinglePath(target, pathsByDestination) {
+  function extendBounds(bounds, latlngs) {
+    latlngs.forEach(pt => {
+      bounds = bounds ? bounds.extend(pt) : L.latLngBounds([pt], [pt]);
+    });
+    return bounds;
+  }
+
+  function buildCurvedSegmentPoints(a, b, bend = 0) {
+    const midLat = (a[0] + b[0]) / 2;
+    const midLng = (a[1] + b[1]) / 2;
+
+    const dLat = b[0] - a[0];
+    const dLng = b[1] - a[1];
+    const len = Math.sqrt(dLat * dLat + dLng * dLng) || 1;
+
+    const nLat = -dLng / len;
+    const nLng = dLat / len;
+
+    return [
+      a,
+      [midLat + nLat * bend, midLng + nLng * bend],
+      b
+    ];
+  }
+
+  function buildBentPathCoords(coords, bend = 0) {
+    if (!coords || coords.length <= 1) return coords || [];
+
+    const curved = [coords[0]];
+    for (let i = 1; i < coords.length; i += 1) {
+      const seg = buildCurvedSegmentPoints(coords[i - 1], coords[i], bend);
+      curved.push(seg[1], seg[2]);
+    }
+    return curved;
+  }
+
+  function buildProtocolBranchCoords(path, prefixLen, protocol) {
+    const branch = path.slice(Math.max(prefixLen - 1, 0));
+    if (!branch.length) return [];
+
+    const rawCoords = buildFullCoords(branch);
+    return buildBentPathCoords(rawCoords, PROTOCOL_STYLES[protocol]?.bend || 0);
+  }
+
+  function highlightNeutralPath(path, drawNodes = false) {
     if (activeHighlightLayer) {
       map.removeLayer(activeHighlightLayer);
       activeHighlightLayer = null;
     }
 
-    const path = pathsByDestination.get(target);
+    clearCaseOverlays();
+
     if (!path || !path.length) return;
 
     const coords = buildFullCoords(path);
 
     activeHighlightLayer = L.polyline(coords, {
-      color: COLORS.SOURCE,
-      weight: 5,
-      opacity: 0.92
+      color: NEUTRAL_HIGHLIGHT_STYLE.color,
+      weight: NEUTRAL_HIGHLIGHT_STYLE.weight,
+      opacity: NEUTRAL_HIGHLIGHT_STYLE.opacity
     }).addTo(map);
 
     activeHighlightLayer.bringToFront();
-    map.fitBounds(activeHighlightLayer.getBounds(), { padding: [40, 40] });
+
+    if (drawNodes) {
+      drawCaseRouteNodes(path);
+    }
+
+    map.fitBounds(activeHighlightLayer.getBounds(), { padding: [50, 50] });
+  }
+
+  function highlightSinglePath(target, pathsByDestination) {
+    const path = pathsByDestination.get(target);
+    if (!path || !path.length) return;
+    highlightNeutralPath(path, false);
   }
 
   function highlightAllPathsThroughIp(ip, model) {
@@ -487,37 +608,31 @@
       activeHighlightLayer = null;
     }
 
+    clearCaseOverlays();
+
     const layers = [];
-    let colorIndex = 0;
+    let bounds = null;
 
     for (const [target, path] of model.pathsByDestination.entries()) {
       if (!path.some(n => n.ip === ip)) continue;
 
       const coords = buildFullCoords(path);
-      const color = MULTI_PATH_COLORS[colorIndex % MULTI_PATH_COLORS.length];
-      colorIndex += 1;
 
       const line = L.polyline(coords, {
-        color,
-        weight: 4.5,
-        opacity: 0.9
+        color: NEUTRAL_HIGHLIGHT_STYLE.color,
+        weight: 4,
+        opacity: 0.72
       });
 
-      line.bindTooltip(`Path to ${target}`, {
-        sticky: true
-      });
-
+      line.bindTooltip(`Path to ${target}`, { sticky: true });
       layers.push(line);
+      bounds = extendBounds(bounds, coords);
     }
 
     if (!layers.length) return;
 
     activeHighlightLayer = L.layerGroup(layers).addTo(map);
 
-    let bounds = null;
-    for (const line of layers) {
-      bounds = bounds ? bounds.extend(line.getBounds()) : line.getBounds();
-    }
     if (bounds) {
       map.fitBounds(bounds, { padding: [40, 40] });
     }
@@ -575,22 +690,8 @@
   }
 
   function highlightCasePath(target, path, pathsByDestination) {
-    if (activeHighlightLayer) {
-      map.removeLayer(activeHighlightLayer);
-      activeHighlightLayer = null;
-    }
-
-    const coords = buildFullCoords(path);
-
-    activeHighlightLayer = L.polyline(coords, {
-      color: COLORS.SOURCE,
-      weight: 5,
-      opacity: 0.95
-    }).addTo(map);
-
-    activeHighlightLayer.bringToFront();
-    drawCaseRouteNodes(path);
-    map.fitBounds(activeHighlightLayer.getBounds(), { padding: [50, 50] });
+    if (!path || !path.length) return;
+    highlightNeutralPath(path, true);
   }
 
   function highlightProtocolComparison(protocolPaths) {
@@ -601,45 +702,65 @@
 
     clearCaseOverlays();
 
-    const protocolColors = {
-      icmp: "#7de2a8",
-      tcp: "#ff8f6b",
-      udp: "#63b3ff"
-    };
-
     const layers = [];
-    let basePath = null;
+    let bounds = null;
+    const protocols = ["icmp", "tcp", "udp"];
+    const prefixLen = commonProtocolPrefixLength(protocolPaths);
 
-    ["icmp", "tcp", "udp"].forEach(protocol => {
+    const referencePath = protocols
+      .map(p => protocolPaths[p])
+      .find(path => path && path.length > 0);
+
+    if (!referencePath || !referencePath.length) return;
+
+    let basePath = referencePath;
+
+    if (prefixLen > 0) {
+      const sharedPart = referencePath.slice(0, prefixLen);
+      const sharedCoords = buildFullCoords(sharedPart);
+
+      const sharedLine = L.polyline(sharedCoords, {
+        color: COLORS.NEUTRAL_HIGHLIGHT,
+        weight: 5,
+        opacity: 0.95
+      });
+
+      sharedLine.bindTooltip("Shared prefix", { sticky: true });
+      layers.push(sharedLine);
+      bounds = extendBounds(bounds, sharedCoords);
+    }
+
+    protocols.forEach(protocol => {
       const path = protocolPaths[protocol];
       if (!path || !path.length) return;
 
-      if (!basePath || path.length > basePath.length) {
+      if (path.length > basePath.length) {
         basePath = path;
       }
 
-      const line = L.polyline(buildFullCoords(path), {
-        color: protocolColors[protocol],
-        weight: 4,
-        opacity: 0.92
+      const branchCoords = buildProtocolBranchCoords(path, prefixLen, protocol);
+      if (!branchCoords.length) return;
+
+      const style = PROTOCOL_STYLES[protocol];
+
+      const line = L.polyline(branchCoords, {
+        color: style.color,
+        weight: style.weight,
+        opacity: style.opacity,
+        dashArray: style.dashArray || null,
+        lineCap: "round",
+        lineJoin: "round"
       });
 
-      line.bindTooltip(`${protocol.toUpperCase()} path`, { sticky: true });
+      line.bindTooltip(`${style.label} branch`, { sticky: true });
       layers.push(line);
+      bounds = extendBounds(bounds, branchCoords);
     });
 
     if (!layers.length) return;
 
     activeHighlightLayer = L.layerGroup(layers).addTo(map);
-
-    if (basePath) {
-      drawCaseRouteNodes(basePath);
-    }
-
-    let bounds = null;
-    layers.forEach(layer => {
-      bounds = bounds ? bounds.extend(layer.getBounds()) : layer.getBounds();
-    });
+    drawCaseRouteNodes(basePath);
 
     if (bounds) {
       map.fitBounds(bounds, { padding: [50, 50] });
@@ -775,18 +896,23 @@
 
     for (const dst of destinations) {
       const paths = protocolPathsForDestination(dst);
-      const score = protocolDivergenceScore(paths);
-      if (score > bestProtocolScore) {
-        bestProtocolScore = score;
+      const pairwise = protocolPairwiseBreakdown(paths);
+
+      if (pairwise.validPairCount < 2) continue;
+      if (pairwise.total <= 0) continue;
+
+      if (pairwise.total > bestProtocolScore) {
+        bestProtocolScore = pairwise.total;
         protocolCase = {
           key: "protocol_divergence",
           label: "Case 1: Protocol divergence",
           target: dst.target,
           protocolPaths: paths,
-          score,
+          score: pairwise.total,
+          pairwiseBreakdown: pairwise.breakdown,
           description:
-            "This destination shows a real divergence among ICMP, TCP, and UDP routes, meaning the network does not present the same path under different probing protocols.",
-          metricLine: `Divergent hop positions: ${score}`
+            "This destination shows the strongest pairwise route divergence across ICMP, TCP, and UDP, meaning the discovered path depends heavily on which protocol is used.",
+          metricLine: `Total pairwise divergence: ${pairwise.total}`
         };
       }
     }
@@ -928,6 +1054,16 @@
       .map(p => `${p.toUpperCase()}: ${protocolPaths[p].length} hops`)
       .join(" · ");
 
+    const pairwiseHtml = (caseInfo.pairwiseBreakdown || []).length
+      ? `
+        <div class="protocol-list">
+          ${(caseInfo.pairwiseBreakdown || [])
+            .map(x => `${x.pair}: ${x.score}`)
+            .join(" · ")}
+        </div>
+      `
+      : "";
+
     return `
       <div class="case-viz">
         <div class="case-title">${escapeHtml(caseInfo.label)}</div>
@@ -937,6 +1073,7 @@
         </div>
         <div class="case-desc">${escapeHtml(caseInfo.description)}</div>
         <div class="protocol-list">${escapeHtml(availableProtocols)}</div>
+        ${pairwiseHtml}
         <div class="protocol-tree">
           ${trunkHtml}
           <div class="protocol-branches">

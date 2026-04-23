@@ -1,13 +1,5 @@
 # HOW TO INSTALL AND RUN
 
-## Requirements
-
-* Python **3.8+** (3.9 recommended)
-* `sudo` access (required for raw socket operations in traceroute)
-* `conda` (recommended) or `pip`
-
----
-
 ## Quick Start (Recommended: Conda + Makefile)
 
 ```bash id="conda1"
