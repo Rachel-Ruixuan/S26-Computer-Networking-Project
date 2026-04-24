@@ -610,26 +610,34 @@
 
     clearCaseOverlays();
 
-    const layers = [];
-    let bounds = null;
+    const matchedPaths = [];
 
     for (const [target, path] of model.pathsByDestination.entries()) {
       if (!path.some(n => n.ip === ip)) continue;
+      matchedPaths.push({ target, path });
+    }
 
+    if (!matchedPaths.length) return;
+
+    const layers = [];
+    let bounds = null;
+
+    matchedPaths.forEach(({ target, path }, index) => {
       const coords = buildFullCoords(path);
+      const color = MULTI_PATH_COLORS[index % MULTI_PATH_COLORS.length];
 
       const line = L.polyline(coords, {
-        color: NEUTRAL_HIGHLIGHT_STYLE.color,
-        weight: 4,
-        opacity: 0.72
+        color,
+        weight: 4.2,
+        opacity: 0.88,
+        lineCap: "round",
+        lineJoin: "round"
       });
 
       line.bindTooltip(`Path to ${target}`, { sticky: true });
       layers.push(line);
       bounds = extendBounds(bounds, coords);
-    }
-
-    if (!layers.length) return;
+    });
 
     activeHighlightLayer = L.layerGroup(layers).addTo(map);
 
@@ -1054,16 +1062,6 @@
       .map(p => `${p.toUpperCase()}: ${protocolPaths[p].length} hops`)
       .join(" · ");
 
-    const pairwiseHtml = (caseInfo.pairwiseBreakdown || []).length
-      ? `
-        <div class="protocol-list">
-          ${(caseInfo.pairwiseBreakdown || [])
-            .map(x => `${x.pair}: ${x.score}`)
-            .join(" · ")}
-        </div>
-      `
-      : "";
-
     return `
       <div class="case-viz">
         <div class="case-title">${escapeHtml(caseInfo.label)}</div>
@@ -1073,7 +1071,6 @@
         </div>
         <div class="case-desc">${escapeHtml(caseInfo.description)}</div>
         <div class="protocol-list">${escapeHtml(availableProtocols)}</div>
-        ${pairwiseHtml}
         <div class="protocol-tree">
           ${trunkHtml}
           <div class="protocol-branches">
