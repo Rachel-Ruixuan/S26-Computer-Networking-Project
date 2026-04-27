@@ -30,7 +30,7 @@ topology_visualizer/enriched_results.json
 To skip probing and directly launch the visualizer:
 
 ```bash
-make pipeline SKIP_INSTALL=1 SKIP_RUN=1
+make pipeline SKIP_RUN=1
 ```
 
 
