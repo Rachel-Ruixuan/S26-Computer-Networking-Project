@@ -19,5 +19,7 @@ clean:
 help:
 	@echo "Available targets:"
 	@echo "  install  - create conda env and install Python deps"
-	@echo "  all      - run the analyzer and visualize the results"
+	@echo "  all      - run analyzer, enrich data, and launch visualizer"
+	@echo "  run      - rerun traceroute probing and enrichment"
+	@echo "  visualize - launch visualizer using existing enriched_results.json (skips probing and enrichment)"
 	@echo "  clean    - remove generated JSON files"
